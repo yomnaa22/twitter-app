@@ -16,13 +16,13 @@ class CreateTweetsTable extends Migration
         Schema::create('tweets', function (Blueprint $table) {
             $table->id();
             $table->string('description');
-            $table->string('tag');
+            $table->string('tag')->nullable();
             $table->integer('likes')->default(0);
             $table->integer('retweets')->default(0);
             $table->string('img')->nullable();
-            $table->boolean('Is_bookmarked');
-            $table->boolean('Is_liked');
-            $table->boolean('Is_retweeted');
+            $table->boolean('Is_bookmarked')->default(false);
+            $table->boolean('Is_liked')->default(false);
+            $table->boolean('Is_retweeted')->default(false);
             $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
