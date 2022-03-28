@@ -105,7 +105,6 @@ class UserController extends Controller
             'lname'=>$request->lname ,
             'b_date'=>$request->b_date ,
             'email'=>$request->email ,
-
             'img'=>$name,
             'bio'=>$request->bio,
             'country'=>$request->country,
@@ -139,11 +138,11 @@ class UserController extends Controller
         return $this->apiValidation($request , [
             'fname' => 'required|min:3|max:10',
             'lname' => 'required|min:3|max:10',
-            'img' => 'required|image|mimes:jpeg,png',
+            'img' => 'image|mimes:jpeg,png',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|',
             'bio' => 'required',
-            'country' => 'required',
+          
             
         ]);
     }

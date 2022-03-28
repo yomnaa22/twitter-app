@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Tweet;
 use Illuminate\Http\Request;
-
+use Illuminate\Http\Response;
+use App\Http\Traits\ApiResponseTrait;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 class TweetController extends Controller
 {
+    use ApiResponseTrait;
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +19,8 @@ class TweetController extends Controller
      */
     public function index()
     {
-        //
+        $tweets = Tweet::get();
+        return response()->json($tweets,200);
     }
 
     /**
@@ -35,7 +41,25 @@ class TweetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validation = $this->validation($request);
+        if($validation instanceof Response){
+            return $validation;
+        }
+        $user=User::find($request->user_id);
+        if($user){
+            $tweet = Tweet::create([
+                'user_id'=>$request->user_id,
+                'description'=>$request->description,
+                'tag'=>$request->tag,
+                'img'=>$request->img,
+                
+            ]);
+            return response()->json($tweet,201);
+        }
+        else{
+            return response()->json(['message'=>'user not found'],404);
+        }
+        
     }
 
     /**
@@ -44,11 +68,29 @@ class TweetController extends Controller
      * @param  \App\Models\Tweet  $tweet
      * @return \Illuminate\Http\Response
      */
-    public function show(Tweet $tweet)
+    public function show($id)
     {
-        //
+        $tweet = Tweet::find($id);
+        return response()->json($tweet,200);
     }
 
+
+    public function showByUser($u_id)
+    {
+        $tweets = Tweet::where('user_id',$u_id)->get();
+        return response()->json($tweets,200);
+    }
+
+    public function userWithtweet($t_id)
+    {
+        $data = DB::table('users')
+     
+        ->join('tweets','users.id' , '=','tweets.user_id')
+        ->where('tweets.id', '=', $t_id)
+        ->select( 'users.fname','users.username','tweets.*',)
+       ->get();
+       return response()->json($data,200);
+    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -78,8 +120,29 @@ class TweetController extends Controller
      * @param  \App\Models\Tweet  $tweet
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Tweet $tweet)
+    public function destroy($id)
     {
-        //
+        $tweet = Tweet::find($id);
+        if($tweet){
+            $tweet->delete();
+            return response()->json(['message'=>'deleted'],200);
+        }
+        else{
+            return response()->json(['message'=>'not found'],404);
+        }
+    }
+
+    public function validation($request){
+        return $this->apiValidation($request, [
+            'description' => 'required|string|max:255',
+            'tag' => 'string|max:30',
+            'likes' => 'integer',
+            'retweets' => 'integer',
+            'img' => 'image|mimes:jpeg,png',
+            'Is_bookmarked' => 'boolean',
+            'Is_liked' => 'boolean',
+            'Is_retweeted' => 'boolean',
+            'user_id' => 'required|integer|exists:users,id',
+        ]);
     }
 }

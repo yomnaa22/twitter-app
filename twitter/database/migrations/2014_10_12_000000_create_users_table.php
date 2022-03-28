@@ -17,11 +17,11 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('fname');
             $table->string('lname');
-            $table->date('b_date');
+            $table->date('b_date')->nullable();
             $table->string('username');
             $table->string('img')->nullable();
-            $table->string('bio');
-            $table->string('country');
+            $table->string('bio')->nullable();
+            $table->string('country')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
