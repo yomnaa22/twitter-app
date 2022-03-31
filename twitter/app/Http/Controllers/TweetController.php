@@ -87,10 +87,29 @@ class TweetController extends Controller
      
         ->join('tweets','users.id' , '=','tweets.user_id')
         ->where('tweets.id', '=', $t_id)
-        ->select( 'users.fname','users.username','tweets.*',)
+        ->select( 'users.fname','users.username','users.img','tweets.*',)
        ->get();
        return response()->json($data,200);
     }
+
+    public function followingsTweet($u_id)
+    {
+        $followingTweet = DB::table('follows')
+      
+        ->join('tweets','follows.following_user_id' , '=','tweets.user_id')
+        ->join('users', 'users.id', '=', 'follows.following_user_id')
+        ->where('follows.user_id', '=', $u_id)
+        ->select( 'tweets.*','users.fname','users.username')
+       ->get();
+       return response()->json($followingTweet,200);
+    }
+
+//     $exam = DB::table('exams')
+//     ->join('courses', 'courses.id', '=', 'exams.course_id')
+//     ->join('questions','exams.id' , '=','questions.exam_id')
+//     ->where('courses.id', '=', $c_id)
+//     ->select( 'exams.*','questions.*',)
+//    ->get();
     /**
      * Show the form for editing the specified resource.
      *

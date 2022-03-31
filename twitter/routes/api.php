@@ -36,3 +36,6 @@ Route::post('/tweets/{id}',[TweetController::class, 'update']);
 Route::delete('/tweets/{id}',[TweetController::class, 'destroy']);
 
 Route::get('/tweets/data/{t_id}', [TweetController::class, 'userWithtweet']);
+
+Route::get('/followingtweet/{u_id}', [TweetController::class, 'followingsTweet']);
+
